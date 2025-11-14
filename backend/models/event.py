@@ -1,8 +1,9 @@
 class Event:
     def __init__(
-        self, title, subtitle, to_whom, brief_description, extended_description,
+        self, id, title, subtitle, to_whom, brief_description, extended_description,
         start_datetime, end_datetime, topics, contacts, costs, image_url, link
     ):
+        self.id = id
         self.title = title
         self.subtitle = subtitle
         self.to_whom = to_whom
@@ -19,6 +20,7 @@ class Event:
     @staticmethod
     def from_dict(data: dict) -> 'Event':
         return Event(
+            id=data.get("id", ""),
             title=data.get("titolo", ""),
             subtitle=data.get("sottotitolo", ""),
             to_whom=data.get("rivolto_a", ""),
@@ -32,3 +34,10 @@ class Event:
             image_url=data.get("immagine", ""),
             link=data.get("link", "")
         )
+    
+    @staticmethod
+    def get_event_from_id(eventi : list['Event'], event_id: int) -> 'Event':
+        for event in eventi:
+            if event.id == event_id:
+                return event
+        return None

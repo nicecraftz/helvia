@@ -6,7 +6,7 @@ from app import db
 
 class User(db.Model):
     __tablename__ = "users"
-
+    
     id: Mapped[int] = mapped_column(primary_key=True)
 
     name: Mapped[str] = mapped_column(db.String(100), nullable=False)
@@ -14,6 +14,7 @@ class User(db.Model):
     username: Mapped[str] = mapped_column(db.String(50), unique=True, nullable=False)
     email: Mapped[str] = mapped_column(db.String(100), unique=True, nullable=False)
     password_bcrypt: Mapped[str] = mapped_column(db.String(255), nullable=False)
+    is_private: Mapped[bool] = mapped_column(db.Boolean, default=False)
 
     access_data: Mapped["UserAccessData"] = relationship(
         "UserAccessData",
@@ -21,16 +22,24 @@ class User(db.Model):
         uselist=False,
         cascade="all, delete",
     )
+    
     statistics: Mapped["UserStatistics"] = relationship(
         "UserStatistics",
         backref="user",
         uselist=False,
         cascade="all, delete",
     )
+
     achievements: Mapped[List["Achievement"]] = relationship(
         "Achievement",
         secondary="user_achievements",
         backref="users",
+    )
+
+    interests: Mapped[List["UserInterest"]] = relationship(
+        "UserInterest",
+        backref="user",
+        cascade="all, delete",
     )
 
     @staticmethod
@@ -56,7 +65,6 @@ class UserAccessData(db.Model):
         nullable=False,
     )
 
-
 class UserStatistics(db.Model):
     __tablename__ = "user_statistics"
 
@@ -71,7 +79,18 @@ class UserStatistics(db.Model):
         db.ForeignKey("users.id"),
         nullable=False,
     )
+    
+class UserInterest(db.Model):
+    __tablename__ = "user_interests"
 
+    id: Mapped[int] = mapped_column(primary_key=True)
+    interest_name: Mapped[str] = mapped_column(db.String(100), nullable=False)
+
+    user_id: Mapped[int] = mapped_column(
+        db.Integer,
+        db.ForeignKey("users.id"),
+        nullable=False,
+    )
 
 class Achievement(db.Model):
     __tablename__ = "achievements"

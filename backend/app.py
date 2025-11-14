@@ -2,6 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import os
 
+SECRET_KEY = os.getenv("JWT_SECRET_KEY", "default_secret_key")
 db = SQLAlchemy()
 
 def create_app() -> Flask:
@@ -17,11 +18,13 @@ def create_app() -> Flask:
         "SQLALCHEMY_DATABASE_URI"
     ] = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_ADDRESS}:{DB_PORT}/Helvia"
 
-    db.init_app(app, debug=True)
+    db.init_app(app)
+    
     from routes.user_routes import user_bp
     app.register_blueprint(user_bp)
-    from routes.post_routes import post_bp
-    app.register_blueprint(post_bp)
+
+    from routes.event_routes import event_bp
+    app.register_blueprint(event_bp)
 
     return app
 
