@@ -123,7 +123,7 @@ export default function ChatbotPage() {
             />
             <Button
               onClick={() => handleSend()}
-              className="bg-gradient-to-r from-secondary to-accent hover:from-secondary/90 hover:to-accent/90 text-white rounded-xl px-8 h-14 shadow-lg hover:shadow-xl hover:shadow-secondary/30 transition-all hover:scale-[1.05]"
+              className="h-12 px-6 bg-gradient-to-r from-secondary to-accent hover:from-secondary/90 hover:to-accent/90 text-white rounded-xl shadow-lg hover:shadow-xl hover:shadow-secondary/30 transition-all hover:scale-[1.05]"
             >
               <Send className="w-5 h-5" />
             </Button>

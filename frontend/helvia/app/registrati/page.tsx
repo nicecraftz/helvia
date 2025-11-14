@@ -200,10 +200,6 @@ export default function RegisterPage() {
             </div>
           </div>
         </div>
-
-        <div className="relative z-10 text-sm text-muted-foreground">
-          {userType === 'business' ? 'Oltre 50 organizzatori si affidano a Helvia' : 'Oltre 500 studenti scoprono nuovi eventi ogni giorno'}
-        </div>
       </div>
 
       {/* Right side - Registration form */}

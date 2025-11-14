@@ -207,7 +207,7 @@ export default function EventsPage() {
 
           {filteredEvents.map((event) => (
             <Link key={event.id} href={`/eventi/${event.id}`}>
-              <div className="bg-card rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all hover:scale-[1.01] cursor-pointer border border-border/50">
+              <div className="bg-card rounded-2xl mb-15 overflow-hidden shadow-md hover:shadow-xl transition-all hover:scale-[1.01] cursor-pointer border border-border/50">
                 <div className="relative">
                   <img
                     src={event.image || "/placeholder.svg"}

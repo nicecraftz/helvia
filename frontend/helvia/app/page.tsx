@@ -14,10 +14,7 @@ export default function LandingPage() {
         
         <div className="container mx-auto px-6 py-24 relative">
           <div className="max-w-5xl mx-auto text-center space-y-8">
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary/10 border border-primary/30 backdrop-blur-sm">
-              <MapPin className="w-4 h-4 text-primary" />
-              <span className="text-sm font-semibold text-primary">Macerata · Cultura · Comunità</span>
-            </div>
+          
 
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight">
               <span className="block text-foreground mb-2">Vivi Macerata</span>

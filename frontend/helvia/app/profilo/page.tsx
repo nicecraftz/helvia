@@ -189,11 +189,11 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        <div className="space-y-4 animate-in fade-in slide-in-from-bottom duration-500 delay-300">
+        <div className="space-y-9 animate-in fade-in slide-in-from-bottom duration-500 delay-300">
           <Link href="/profilo/modifica-password">
             <Button
               variant="outline"
-              className="w-full justify-start gap-4 glass-effect border-2 border-border/50 rounded-2xl py-7 text-lg hover:bg-primary/5 hover:border-primary/50 transition-all hover:scale-[1.02]"
+              className="w-full justify-start gap-4 glass-effect border-2 border-border/50 rounded-2xl py-7 text-lg hover:bg-primary/5 hover:border-primary/50 transition-all hover:scale-[1.02] mb-4"
             >
               <div className="w-11 h-11 bg-primary/10 rounded-xl flex items-center justify-center">
                 <Lock className="w-5 h-5 text-primary" />
@@ -205,7 +205,8 @@ export default function ProfilePage() {
           <Link href="/profilo/preferenze">
             <Button
               variant="outline"
-              className="w-full justify-start gap-4 glass-effect border-2 border-border/50 rounded-2xl py-7 text-lg hover:bg-secondary/5 hover:border-secondary/50 transition-all hover:scale-[1.02]"
+              className="w-full justify-start gap-4 glass-effect border-2 border-border/50 rounded-2xl py-7 text-lg hover:bg-primary/5 hover:border-primary/50 transition-all hover:scale-[1.02] mb-4"
+
             >
               <div className="w-11 h-11 bg-secondary/10 rounded-xl flex items-center justify-center">
                 <Settings className="w-5 h-5 text-secondary" />

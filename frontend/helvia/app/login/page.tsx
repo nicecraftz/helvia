@@ -172,10 +172,6 @@ export default function LoginPage() {
             </div>
           </div>
         </div>
-
-        <div className="relative z-10 text-sm text-muted-foreground">
-          Ispirato a Helvia Recina, l'antica città romana del territorio maceratese
-        </div>
       </div>
 
       {/* Right side - Login form */}

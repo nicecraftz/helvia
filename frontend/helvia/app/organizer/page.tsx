@@ -122,7 +122,7 @@ export default function OrganizerDashboard() {
             </div>
             <div>
               <p className="text-2xl font-bold text-foreground">{stats.totalViews.toLocaleString()}</p>
-              <p className="text-xs text-muted-foreground">Visualizzazioni</p>
+              <p className="text-xs text-muted-foreground">Partecipanti</p>
             </div>
           </Card>
 

@@ -139,7 +139,7 @@ export default function HomePage() {
             <div className="space-y-16">
               {featuredEvents.map((event, index) => (
                 <Link key={event.id} href={`/eventi/${event.id}`}>
-                  <div className="gradient-border overflow-hidden hover:scale-[1.02] transition-all duration-300 cursor-pointer animate-in fade-in slide-in-from-bottom duration-500" style={{ animationDelay: `${index * 100}ms` }}>
+                  <div className="gradient-border mb-15 overflow-hidden hover:scale-[1.02] transition-all duration-300 cursor-pointer animate-in fade-in slide-in-from-bottom duration-500" style={{ animationDelay: `${index * 100}ms` }}>
                     <div className="bg-card rounded-2xl overflow-hidden">
                       <div className="relative">
                         <img
@@ -229,7 +229,7 @@ export default function HomePage() {
                 <div className="space-y-16">
                   {aiRecommendations.map((event, index) => (
                     <Link key={event.id} href={`/eventi/${event.id}`}>
-                      <div className="glass-effect rounded-2xl overflow-hidden hover:scale-[1.02] transition-all duration-300 cursor-pointer border-2 border-secondary/30 hover:border-secondary animate-in fade-in slide-in-from-bottom duration-500 hover:shadow-lg hover:shadow-secondary/20" style={{ animationDelay: `${index * 100}ms` }}>
+                      <div className="glass-effect rounded-2xl mb-15 overflow-hidden hover:scale-[1.02] transition-all duration-300 cursor-pointer border-2 border-secondary/30 hover:border-secondary animate-in fade-in slide-in-from-bottom duration-500 hover:shadow-lg hover:shadow-secondary/20" style={{ animationDelay: `${index * 100}ms` }}>
                         <div className="relative">
                           <img
                             src={event.image || "/placeholder.svg"}

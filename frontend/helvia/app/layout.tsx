@@ -6,7 +6,7 @@ import './globals.css'
 const dmSans = DM_Sans({ subsets: ["latin"], weight: ['400', '500', '600', '700'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
-  title: 'Helvia - Scopri Eventi con AI',
+  title: 'Helvia',
   description: 'Piattaforma di scoperta eventi alimentata dall\'AI per Macerata',
   generator: 'v0.app',
   icons: {
