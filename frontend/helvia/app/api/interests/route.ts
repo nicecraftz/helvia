@@ -22,18 +22,16 @@ export async function GET(req: Request) {
     const cookieHeader = getCookieHeader(req);
 
     // Tentiamo sia user che customer
-    const endpoints = ["/api/user/interests", "/api/customer/interests"];
+    const endpoint = "/api/user/interests";
 
-    for (const ep of endpoints) {
-      const res = await fetch(backendURL + ep, {
-        method: "GET",
-        headers: { Cookie: cookieHeader },
-      });
+    const res = await fetch(backendURL + endpoint, {
+      method: "GET",
+      headers: { Cookie: cookieHeader },
+    });
 
-      if (res.ok) {
-        const data = await res.json();
-        return NextResponse.json(data);
-      }
+    if (res.ok) {
+      const data = await res.json();
+      return NextResponse.json(data);
     }
 
     return NextResponse.json({ error: "Non autenticato" }, { status: 401 });
@@ -65,22 +63,20 @@ export async function POST(req: Request) {
       );
     }
 
-    const endpoints = ["/api/user/interests", "/api/customer/interests"];
+    const endpoint = "/api/user/interests";
 
-    for (const ep of endpoints) {
-      const res = await fetch(backendURL + ep, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Cookie: cookieHeader,
-        },
-        body: JSON.stringify(body),
-      });
+    const res = await fetch(backendURL + endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: cookieHeader,
+      },
+      body: JSON.stringify(body),
+    });
 
-      if (res.ok) {
-        const data = await res.json();
-        return NextResponse.json(data);
-      }
+    if (res.ok) {
+      const data = await res.json();
+      return NextResponse.json(data);
     }
 
     return NextResponse.json({ error: "Non autenticato" }, { status: 401 });
