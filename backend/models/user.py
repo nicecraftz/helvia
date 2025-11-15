@@ -4,7 +4,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from bcrypt import hashpw, gensalt
 
-db = SQLAlchemy()
+from Alchemy import db
 
 class User(db.Model):
     __tablename__ = "users"
@@ -12,7 +12,7 @@ class User(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
 
     name: Mapped[str] = mapped_column(db.String(100), nullable=False)
-    last_name: Mapped[str] = mapped_column(db.String(100), nullable=False)
+    surname: Mapped[str] = mapped_column(db.String(100), nullable=False)
     username: Mapped[str] = mapped_column(db.String(50), unique=True, nullable=False)
     email: Mapped[str] = mapped_column(db.String(100), unique=True, nullable=False)
     password_bcrypt: Mapped[str] = mapped_column(db.String(255), nullable=False)
@@ -41,6 +41,10 @@ class User(db.Model):
             password_bcrypt=hashpw(data.get("password").encode('utf-8'), gensalt()).decode('utf-8'),
             is_private=False
         )
+    
+    @staticmethod
+    def get_user_from_id(user_id: int) -> "User | None":
+        return User.query.filter_by(id=user_id).first()
 
 class UserStatistics(db.Model):
     __tablename__ = "user_statistics"

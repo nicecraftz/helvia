@@ -1,18 +1,17 @@
+import os
 from flask import Blueprint, request
-import services.llm_service
+import jwt
 from models.user import User
-from services.llm_service import get_event_recommendation
-
-import os                 
+from services.alg_service import calculate_macro_interest
+from services.user_service import register_user, login_user
+from services.customer_service import register_customer, login_customer
 
 SECRET_KEY = os.getenv("JWT_SECRET_KEY", "default_secret_key")
 
-import jwt 
+alg_bp = Blueprint('alg', __name__, url_prefix='/api/alg')
 
-llm_bp = Blueprint('llm', __name__, url_prefix='/api/llm')
-
-@llm_bp.get("/event/recommendation")
-def event_recommendation():
+@alg_bp.get('/getuserinterestpercentage/<int:user_id>')
+def get_user_interest_percentage(user_id: int):
     auth_header = request.headers.get("Authorization")
     if not auth_header:
         return {"error": "No authorization provided"}, 403
@@ -32,9 +31,6 @@ def event_recommendation():
     if not user:
         return {"error": "User not found"}, 404
     user = User.get_user_from_id(user_id)
-    recommendation = get_event_recommendation(user)
+    percentage = calculate_macro_interest(user)
 
-    return recommendation
-
-
-
+    return percentage

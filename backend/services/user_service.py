@@ -6,7 +6,7 @@ import datetime
 import bcrypt
 import jwt
 
-db = SQLAlchemy()
+from Alchemy import db
 
 
 def register_user(payload: dict) -> tuple:

@@ -4,7 +4,7 @@ import os
 
 SECRET_KEY = os.getenv("JWT_SECRET_KEY", "default_secret_key")
 
-db = SQLAlchemy()
+from Alchemy import db
 
 from bcrypt import checkpw
 import jwt

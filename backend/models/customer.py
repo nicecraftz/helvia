@@ -3,7 +3,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from models.event import Event
 import bcrypt
 
-db = SQLAlchemy()
+from Alchemy import db
 
 class Customer(db.Model):
     __tablename__ = "customers"

@@ -1,7 +1,6 @@
 from datapizza.clients.openai import OpenAIClient
 from datapizza.type import TextBlock
 from models.event import Event
-from routes.event_routes import cache
 from models.user import User
 
 import os
@@ -42,12 +41,16 @@ def get_event_recommendation(user: User) -> str:
     user_json = json.dumps(serialize_user(user), ensure_ascii=False)
 
     request = TextBlock(
-        "Dati tutti questi eventi, determina quale potrebbe interessare di più "
-        "a questo utente in base ai suoi interessi. "
-        "Ritornane solo 1 in formato JSON. "
-        "Dopo tutti i dati riguardanti l'evento aggiungi al JSON anche un campo "
-        "explanation che spiega perché l'evento è stato scelto, ad esempio: "
-        "'explanation': 'L'IA ha scelto questo evento per il tuo interesse in {elemento_tag}'."
+        "Sei un sistema di raccomandazione. "
+        "Dati tutti questi eventi e i dati utente, determina quale evento "
+        "potrebbe interessare maggiormente all'utente in base ai suoi interessi. "
+        "Ritornane SOLO UNO in formato JSON valido. "
+        "Il JSON deve contenere TUTTI i dati dell'evento selezionato più "
+        "un campo obbligatorio chiamato 'explanation'. "
+        "Il campo 'explanation' deve essere una frase nel formato: "
+        "'L'IA ha scelto questo evento per il tuo interesse in {elemento_tag}'. "
+        "Sostituisci {elemento_tag} con il nome dell’interesse utente che ha motivato la scelta. "
+        "Non generare nulla al di fuori del JSON."
     )
 
     event_data = TextBlock(events_json)
@@ -58,7 +61,7 @@ def get_event_recommendation(user: User) -> str:
     text = ""
     for block in response.content:
         if isinstance(block, TextBlock):
-            text += block.text + "\n"
+            text += block.content + "\n"
 
     return text.strip()
 
