@@ -1,5 +1,10 @@
+from flask_sqlalchemy import SQLAlchemy
 from models.customer import Customer
-from app import db, SECRET_KEY
+import os                 
+
+SECRET_KEY = os.getenv("JWT_SECRET_KEY", "default_secret_key")
+
+db = SQLAlchemy()
 
 from bcrypt import checkpw
 import jwt

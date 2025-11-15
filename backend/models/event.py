@@ -1,6 +1,8 @@
-from app import db
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
+
+db = SQLAlchemy()
 
 class Event(db.Model):
     __tablename__ = "events"

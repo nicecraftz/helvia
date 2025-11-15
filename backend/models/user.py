@@ -1,8 +1,10 @@
 from datetime import date
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from app import db
 
 from bcrypt import hashpw, gensalt
+
+db = SQLAlchemy()
 
 class User(db.Model):
     __tablename__ = "users"

@@ -3,7 +3,9 @@ from models.event import Event
 from models.customer import Customer
 from services.event_service import create
 
-from app import SECRET_KEY
+import os                 
+
+SECRET_KEY = os.getenv("JWT_SECRET_KEY", "default_secret_key")
 
 import jwt
 
@@ -15,7 +17,6 @@ def get_events():
     events = Event.query.all()
     all_events = {event.id: event for event in events}
     return [event.__dict__ for event in all_events.values()], 200
-
 
 @event_bp.post('/')
 def create_event():

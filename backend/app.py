@@ -1,8 +1,11 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import os
+from routes.auth_routes import auth_bp
+import os                 
 
 SECRET_KEY = os.getenv("JWT_SECRET_KEY", "default_secret_key")
+
 db = SQLAlchemy()
 
 def create_app() -> Flask:
@@ -20,8 +23,8 @@ def create_app() -> Flask:
 
     db.init_app(app)
     
-    from routes.auth_routes import user_bp
-    app.register_blueprint(user_bp)
+    from routes.auth_routes import auth_bp
+    app.register_blueprint(auth_bp)
 
     from routes.event_routes import event_bp
     app.register_blueprint(event_bp)

@@ -1,7 +1,8 @@
+from flask_sqlalchemy import SQLAlchemy
 from models.event import Event
 from models.customer import Customer
 
-from app import db
+db = SQLAlchemy()
 
 def create(payload: dict, customer: Customer):
     new_event = Event.from_dict(payload)
@@ -10,3 +11,4 @@ def create(payload: dict, customer: Customer):
     db.session.commit()
     
     return {"message": "Event created successfully", "event_id": new_event.id}
+
