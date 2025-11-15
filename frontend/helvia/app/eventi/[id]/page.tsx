@@ -25,7 +25,6 @@ export default function EventDetailPage() {
   const [canShare, setCanShare] = useState(true);
 
   useEffect(() => {
-    // Carica preferenze dal localStorage
     const preferences = localStorage.getItem("userPreferences");
     if (preferences) {
       const parsed = JSON.parse(preferences);

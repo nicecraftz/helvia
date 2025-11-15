@@ -1,7 +1,7 @@
 from services.event_service import create
 from models.customer import Customer
 from flask import Blueprint, request
-from utils.auth import require_auth
+from utils.auth import require_auth, require_customer
 from models.event import Event
 from app import db,SECRET_KEY
 from models.user import User
@@ -17,18 +17,9 @@ def get_events():
     return [event.to_dict() for event in all_events.values()], 200
 
 @event_bp.post('/')
-@require_auth
-def create_event():
+@require_customer
+def create_event(customer: Customer):
     payload = request.get_json()
-    token = request.headers.get("Authorization").split(" ")[1]
-    decoded_jwt = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-    customer = Customer.query.filter_by(id=decoded_jwt.get("customer_id")).first()
-    
-    if not customer:
-        return {
-            "error": "Customer not found"
-        }, 404
-    
     return create(payload, customer)
 
 @event_bp.put('/<int:event_id>/participate')

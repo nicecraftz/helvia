@@ -2,17 +2,9 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { useUser } from "@/hooks/useUser";
 import Navbar from "@/components/navbar";
-import {
-  Sparkles,
-  Calendar,
-  MapPin,
-  TrendingUp,
-  Users,
-  Euro,
-} from "lucide-react";
+import { Calendar, MapPin, TrendingUp, Users, Euro } from "lucide-react";
 
 type EventTopic = {
   name: string;
