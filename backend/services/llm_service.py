@@ -11,6 +11,7 @@ import json
 OPEN_AI_API_KEY = os.getenv("OPEN_AI_API_KEY", "your_default_key")
 client = OpenAIClient(api_key=OPEN_AI_API_KEY)
 
+# Test
 def get_event_reccomendation(event: Event, user: User) -> str:
     request = TextBlock("Dati i dettagli di un evento, fornisci una raccomandazione personalizzata su misura per l'utente basata sui suoi interessi")
     event_data = TextBlock(json.dumps(event.__dict__, ensure_ascii=False))
