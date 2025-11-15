@@ -9,36 +9,11 @@ OPEN_AI_API_KEY = os.getenv("OPEN_AI_API_KEY", "your_default_key")
 client = OpenAIClient(api_key=OPEN_AI_API_KEY)
 
 def get_event_recommendation(user: User) -> str:
-    events = Event.query.all()
+    events : list[Event] = Event.query.all()
+
+    events_json = json.dumps([e.to_dict() for e in events], ensure_ascii=False)
+    user_json = json.dumps(user.to_dict(), ensure_ascii=False)
     
-    def serialize_event(e: Event):
-        return {
-            "id": e.id,
-            "title": e.title,
-            "description": e.description,
-            "start_datetime": e.start_datetime.isoformat(),
-            "end_datetime": e.end_datetime.isoformat(),
-            "cost": e.cost,
-            "image_url": e.image_url,
-            "link": e.link,
-            "sponsored": bool(e.sponsored),
-            "topics": [t.name for t in e.topics]
-        }
-
-    def serialize_user(u: User):
-        return {
-            "id": u.id,
-            "name": u.name,
-            "surname": u.surname,
-            "username": u.username,
-            "email": u.email,
-            "is_private": bool(u.is_private),
-            "interests": [i.interest_name for i in u.interests]
-        }
-
-    events_json = json.dumps([serialize_event(e) for e in events], ensure_ascii=False)
-    user_json = json.dumps(serialize_user(user), ensure_ascii=False)
-
     request = TextBlock(
         "Sei un sistema di raccomandazione. "
         "Dati tutti questi eventi e i dati utente, determina quale evento "

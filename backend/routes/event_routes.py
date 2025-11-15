@@ -1,10 +1,10 @@
-from app import db,SECRET_KEY
-from flask import Blueprint, request
-from models.event import Event
-from models.customer import Customer
-from models.user import User
 from services.event_service import create
+from models.customer import Customer
+from flask import Blueprint, request
 from utils.auth import require_auth
+from models.event import Event
+from app import db,SECRET_KEY
+from models.user import User
 
 import jwt
 

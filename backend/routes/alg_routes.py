@@ -1,10 +1,8 @@
-from app import SECRET_KEY
-
-from flask import Blueprint, request
-from models.user import User
 from services.alg_service import calculate_macro_interest
+from flask import Blueprint, request
 from utils.auth import require_auth
-
+from models.user import User
+from app import SECRET_KEY
 import jwt
 
 alg_bp = Blueprint('alg', __name__, url_prefix='/api/alg')

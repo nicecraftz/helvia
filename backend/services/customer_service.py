@@ -1,9 +1,8 @@
 from datetime import datetime, timedelta
 from models.customer import Customer
-from app import SECRET_KEY
 from bcrypt import checkpw
+from app import SECRET_KEY
 from Alchemy import db
-
 import jwt              
 
 def register_customer(payload: dict) -> str:

@@ -1,7 +1,6 @@
 from flask import Blueprint, request
 from models.customer import Customer
 from utils.auth import require_auth
-
 from app import SECRET_KEY
 import jwt
 

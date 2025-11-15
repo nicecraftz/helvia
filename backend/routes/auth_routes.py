@@ -1,6 +1,6 @@
-from flask import Blueprint, request
-from services.user_service import register_user, login_user
 from services.customer_service import register_customer, login_customer
+from services.user_service import register_user, login_user
+from flask import Blueprint, request
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 

@@ -1,8 +1,8 @@
-from app import SECRET_KEY
-from flask import Blueprint, request
-from models.user import User
 from services.llm_service import get_event_recommendation
+from flask import Blueprint, request
 from utils.auth import require_auth
+from models.user import User
+from app import SECRET_KEY
 
 import jwt 
 
