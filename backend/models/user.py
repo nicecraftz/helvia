@@ -102,7 +102,6 @@ class Achievement(db.Model):
     def __repr__(self) -> str:
         return f"<Achievement {self.name}>"
 
-
 class UserAchievement(db.Model):
     __tablename__ = "user_achievements"
 
