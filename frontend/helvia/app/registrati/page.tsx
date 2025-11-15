@@ -31,16 +31,60 @@ export default function RegisterPage() {
   const [selectedInterests, setSelectedInterests] = useState<string[]>([])
   const [showPassword, setShowPassword] = useState(false)
 
-  const handleUserSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log('[v0] Selected interests:', selectedInterests)
-    router.push('/login')
+ const handleUserSubmit = async (e: React.FormEvent) => {
+  e.preventDefault()
+
+  const res = await fetch("/api/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      type: "user",
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      username: formData.username,
+      password: formData.password,
+      interests: selectedInterests,
+    }),
+  })
+
+  const data = await res.json()
+
+  if (data.error) {
+    alert(data.error)
+    return
   }
 
-  const handleBusinessSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    router.push('/organizer')
+  router.push("/login")
+}
+
+const handleBusinessSubmit = async (e: React.FormEvent) => {
+  e.preventDefault()
+
+  const res = await fetch("/api/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      type: "business",
+      firstName: businessFormData.firstName,
+      lastName: businessFormData.lastName,
+      email: businessFormData.businessEmail,
+      vatNumber: businessFormData.vatNumber,
+      companyName: businessFormData.companyName,
+      username: businessFormData.username,
+      password: businessFormData.password,
+    }),
+  })
+
+  const data = await res.json()
+
+  if (data.error) {
+    alert(data.error)
+    return
   }
+
+  router.push("/login")
+}
 
   if (!userType) {
     return (

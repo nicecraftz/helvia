@@ -21,15 +21,53 @@ export default function LoginPage() {
   })
   const [showPassword, setShowPassword] = useState(false)
 
-  const handleUserSubmit = (e: React.FormEvent) => {
+  /* -------------------- HANDLER UTENTE -------------------- */
+  const handleUserSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    router.push('/home')
+
+    const res = await fetch("/api/login", {
+      method: "POST",
+      body: JSON.stringify({
+        email: formData.username, // o username se il backend accetta username
+        password: formData.password,
+      }),
+    })
+
+    const data = await res.json()
+
+    if (data.error) {
+      alert(data.error)
+      return
+    }
+
+    localStorage.setItem("token", data.token)
+    router.push("/home")
   }
 
-  const handleBusinessSubmit = (e: React.FormEvent) => {
+  /* -------------------- HANDLER BUSINESS -------------------- */
+  const handleBusinessSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    router.push('/organizer')
+
+    const res = await fetch("/api/login", {
+      method: "POST",
+      body: JSON.stringify({
+        email: businessFormData.email,
+        password: businessFormData.password,
+      }),
+    })
+
+    const data = await res.json()
+
+    if (data.error) {
+      alert(data.error)
+      return
+    }
+
+    localStorage.setItem("token", data.token)
+    router.push("/organizer")
   }
+
+  /* ---------------------------------------------------------- */
 
   if (!userType) {
     return (
@@ -158,12 +196,14 @@ export default function LoginPage() {
               </div>
               <span className="text-sm">{userType === 'business' ? 'Promuovi eventi in tutta Macerata' : 'Eventi in tutto il centro storico di Macerata'}</span>
             </div>
+
             <div className="flex items-center gap-3 text-muted-foreground">
               <div className="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center">
                 <Calendar className="w-5 h-5 text-secondary" />
               </div>
               <span className="text-sm">{userType === 'business' ? 'Gestione calendario eventi in tempo reale' : 'Calendario sempre aggiornato in tempo reale'}</span>
             </div>
+
             <div className="flex items-center gap-3 text-muted-foreground">
               <div className={`w-10 h-10 rounded-full ${userType === 'business' ? 'bg-primary/10' : 'bg-accent/10'} flex items-center justify-center`}>
                 <Users className={`w-5 h-5 ${userType === 'business' ? 'text-primary' : 'text-accent'}`} />
@@ -196,7 +236,10 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <form onSubmit={userType === 'business' ? handleBusinessSubmit : handleUserSubmit} className="space-y-6">
+          <form
+            onSubmit={userType === 'business' ? handleBusinessSubmit : handleUserSubmit}
+            className="space-y-6"
+          >
             {userType === 'business' ? (
               <>
                 <div className="space-y-2">
@@ -299,7 +342,10 @@ export default function LoginPage() {
 
             <Button
               type="submit"
-              className={`w-full ${userType === 'business' ? 'bg-gradient-to-r from-accent to-primary hover:from-accent/90 hover:to-primary/90' : 'bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90'} text-white rounded-xl py-6 text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.02] flex items-center justify-center gap-2`}
+              className={`w-full ${userType === 'business'
+                ? 'bg-gradient-to-r from-accent to-primary hover:from-accent/90 hover:to-primary/90'
+                : 'bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90'
+                } text-white rounded-xl py-6 text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.02] flex items-center justify-center gap-2`}
             >
               <LogIn className="w-5 h-5" />
               Accedi
@@ -317,7 +363,10 @@ export default function LoginPage() {
               Non hai un account?{' '}
               <Link
                 href="/registrati"
-                className={`${userType === 'business' ? 'text-accent hover:text-primary' : 'text-primary hover:text-secondary'} font-semibold transition-colors`}
+                className={`${userType === 'business'
+                  ? 'text-accent hover:text-primary'
+                  : 'text-primary hover:text-secondary'
+                  } font-semibold transition-colors`}
               >
                 Registrati
               </Link>
