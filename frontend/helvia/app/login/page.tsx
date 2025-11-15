@@ -297,15 +297,6 @@ export default function LoginPage() {
               </>
             )}
 
-            <div className="flex justify-end">
-              <Link
-                href="/recupera-password"
-                className={`text-sm ${userType === 'business' ? 'text-accent hover:text-primary' : 'text-primary hover:text-secondary'} font-medium transition-colors hover:underline`}
-              >
-                Password dimenticata?
-              </Link>
-            </div>
-
             <Button
               type="submit"
               className={`w-full ${userType === 'business' ? 'bg-gradient-to-r from-accent to-primary hover:from-accent/90 hover:to-primary/90' : 'bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90'} text-white rounded-xl py-6 text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.02] flex items-center justify-center gap-2`}
