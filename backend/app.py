@@ -1,9 +1,6 @@
 from flask import Flask
-from Alchemy import db        
-
+from AlchemyJWT import db        
 import os
-
-SECRET_KEY = os.getenv("JWT_SECRET_KEY", "default_secret_key")
 
 def create_app() -> Flask:
     app = Flask(__name__)

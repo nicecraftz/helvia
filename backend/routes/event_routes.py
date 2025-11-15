@@ -4,11 +4,11 @@ from models.event import Event
 from models.customer import Customer
 from models.user import User
 from services.event_service import create
+from utils.auth import require_auth
 
 import jwt
 
 event_bp = Blueprint('event', __name__, url_prefix='/api/event')
-
 
 @event_bp.get('/')
 def get_events():
@@ -17,16 +17,13 @@ def get_events():
     return [event.__dict__ for event in all_events.values()], 200
 
 @event_bp.post('/')
+@require_auth
 def create_event():
     payload = request.get_json()
     token = request.headers.get("Authorization").split(" ")[1]
-    if not token or token == "":
-        return {
-            "error": "No authorization provided"
-        }, 403
-    
     decoded_jwt = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
     customer = Customer.query.filter_by(id=decoded_jwt.get("customer_id")).first()
+    
     if not customer:
         return {
             "error": "Customer not found"
@@ -35,13 +32,9 @@ def create_event():
     return create(payload, customer)
 
 @event_bp.put('/<int:event_id>/participate')
+@require_auth
 def participate_event(event_id: int):
     token = request.headers.get("Authorization").split(" ")[1]
-    if not token or token == "":
-        return {
-            "error": "No authorization provided"
-        }, 403
-    
     decoded_jwt = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
     user = User.query.filter_by(id=decoded_jwt.get("user_id")).first()
 
@@ -61,6 +54,7 @@ def participate_event(event_id: int):
             "message": "Customer already participating in the event"
         }, 200
     
+    # TODO: Fix relationship in event to store participants list and not the count.
     event.participants.append(user)
     event.participation_count += 1
     user.statistics.total_participated_events += 1

@@ -1,4 +1,4 @@
-from app import SECRET_KEY
+from AlchemyJWT import SECRET_KEY
 from flask import Blueprint, request
 from models.user import User
 from services.llm_service import get_event_recommendation
