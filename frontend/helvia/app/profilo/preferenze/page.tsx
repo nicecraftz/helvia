@@ -157,21 +157,6 @@ export default function PreferencesPage() {
                   onCheckedChange={(checked) => updatePreference('publicProfile', checked)}
                 />
               </div>
-              <div className="flex items-center justify-between p-4 bg-background rounded-xl">
-                <div>
-                  <Label htmlFor="activity" className="text-foreground font-medium">
-                    Condividi Attività
-                  </Label>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Mostra gli eventi a cui partecipi pubblicamente
-                  </p>
-                </div>
-                <Switch
-                  id="activity"
-                  checked={preferences.shareActivity}
-                  onCheckedChange={(checked) => updatePreference('shareActivity', checked)}
-                />
-              </div>
             </div>
           </div>
 

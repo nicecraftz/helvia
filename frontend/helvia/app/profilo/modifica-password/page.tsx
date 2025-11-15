@@ -33,15 +33,7 @@ export default function ChangePasswordPage() {
           <span className="font-medium">Torna al Profilo</span>
         </Link>
 
-        <div className="text-center space-y-2">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-2xl shadow-lg mb-4">
-            <Lock className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-3xl font-bold text-foreground">Modifica Password</h1>
-          <p className="text-sm text-muted-foreground">
-            Cambia la tua password per mantenere il tuo account sicuro
-          </p>
-        </div>
+    
 
         <div className="glass-effect rounded-3xl p-8 shadow-xl border-2 border-primary/20">
           <form onSubmit={handleSubmit} className="space-y-6">

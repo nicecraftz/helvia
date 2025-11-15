@@ -44,8 +44,7 @@ export default function ProfilePage() {
               </h1>
               <p className="text-muted-foreground">@mariorossi</p>
               <p className="text-sm text-muted-foreground mt-1">
-                mario.rossi@esempio.it
-              </p>
+             </p>
               <div className="flex gap-2 mt-3">
                 <span className="px-3 py-1 bg-primary/20 text-primary text-xs font-medium rounded-full border border-primary/30">
                   Esploratore di Macerata
@@ -190,17 +189,7 @@ export default function ProfilePage() {
         </div>
 
         <div className="space-y-9 animate-in fade-in slide-in-from-bottom duration-500 delay-300">
-          <Link href="/profilo/modifica-password">
-            <Button
-              variant="outline"
-              className="w-full justify-start gap-4 glass-effect border-2 border-border/50 rounded-2xl py-7 text-lg hover:bg-primary/5 hover:border-primary/50 transition-all hover:scale-[1.02] mb-4"
-            >
-              <div className="w-11 h-11 bg-primary/10 rounded-xl flex items-center justify-center">
-                <Lock className="w-5 h-5 text-primary" />
-              </div>
-              <span className="font-medium">Modifica Password</span>
-            </Button>
-          </Link>
+
 
           <Link href="/profilo/preferenze">
             <Button
