@@ -1,3 +1,5 @@
+
+
 class Event:
     def __init__(
         self, id, title, extended_description,
