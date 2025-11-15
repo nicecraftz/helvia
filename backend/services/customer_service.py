@@ -1,24 +1,27 @@
+from datetime import datetime, timedelta
 from models.customer import Customer
-from Alchemy import db
+from app import SECRET_KEY
 from bcrypt import checkpw
+from Alchemy import db
 
 import jwt              
-import os   
-
-SECRET_KEY = os.getenv("JWT_SECRET_KEY", "default_secret_key")
-
-
 
 def register_customer(payload: dict) -> str:
     new_customer = Customer.from_dict(payload)
     db.session.add(new_customer)
     db.session.commit()
 
-    token = jwt.encode({"customer_id": new_customer.id}, SECRET_KEY, algorithm="HS256")
-    return token
+    claims = {
+        "customer_id": new_customer.id,
+        "email": new_customer.email,
+        "exp": int((datetime.now() + timedelta(days=7)).timestamp())
+    }
+
+    token = jwt.encode(claims, SECRET_KEY, algorithm="HS256")
+    return {"token": token}
 
 def login_customer(payload: dict) -> str:
-    customer : Customer = Customer.query.filter_by(email=payload.get("email")).first()
+    customer : Customer = Customer.query.filter_by(email=payload["email"]).first()
     
     if not customer:
         return {
@@ -30,5 +33,12 @@ def login_customer(payload: dict) -> str:
             "error": "Incorrect password"
         }
     
-    token = jwt.encode({"customer_id": customer.id}, SECRET_KEY, algorithm="HS256")
-    return token
+    claims = {
+        "customer_id": customer.id,
+        "exp": int((datetime.now() + timedelta(days=7)).timestamp())
+    }
+
+    token = jwt.encode(claims, SECRET_KEY, algorithm="HS256")
+    return {
+        "token": token
+    }

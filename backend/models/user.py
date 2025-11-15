@@ -1,9 +1,6 @@
 from datetime import date
-from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
 from bcrypt import hashpw, gensalt
-
 from Alchemy import db
 
 class User(db.Model):
@@ -11,8 +8,8 @@ class User(db.Model):
     
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    name: Mapped[str] = mapped_column(db.String(100), nullable=False)
-    surname: Mapped[str] = mapped_column(db.String(100), nullable=False)
+    first_name: Mapped[str] = mapped_column(db.String(100), nullable=False)
+    last_name: Mapped[str] = mapped_column(db.String(100), nullable=False)
     username: Mapped[str] = mapped_column(db.String(50), unique=True, nullable=False)
     email: Mapped[str] = mapped_column(db.String(100), unique=True, nullable=False)
     password_bcrypt: Mapped[str] = mapped_column(db.String(255), nullable=False)
@@ -22,7 +19,7 @@ class User(db.Model):
         "UserStatistics",
         backref="user",
         uselist=False,
-        cascade="all, delete",
+        cascade="all, delete"
     )
 
     interests: Mapped[list["UserInterest"]] = relationship(
@@ -31,15 +28,32 @@ class User(db.Model):
         cascade="all, delete",
     )
 
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "username": self.username,
+            "email": self.email,
+            "is_private": self.is_private,
+            "statistics": self.statistics.to_dict() if self.statistics else None,
+            "interests": [interest.interest_name for interest in self.interests],
+        }
+
     @staticmethod
     def from_dict(data: dict) -> "User":
+        raw_interests = data.get("interests", [])
+        interests = [UserInterest(interest_name=interest) for interest in raw_interests]
+
         return User(
-            name=data.get("name"),
+            first_name=data.get("first_name"),
             last_name=data.get("last_name"),
             username=data.get("username"),
             email=data.get("email"),
             password_bcrypt=hashpw(data.get("password").encode('utf-8'), gensalt()).decode('utf-8'),
-            is_private=False
+            statistics=UserStatistics(),
+            is_private=False,
+            interests=interests
         )
     
     @staticmethod
@@ -58,6 +72,12 @@ class UserStatistics(db.Model):
         db.ForeignKey("users.id"),
         nullable=False,
     )
+
+    def to_dict(self) -> dict:
+        return {
+            "total_participated_events": self.total_partecipated_events,
+            "level": self.level,
+        }
     
 class UserInterest(db.Model):
     __tablename__ = "user_interests"

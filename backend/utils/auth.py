@@ -8,11 +8,13 @@ def require_auth(f):
         parts = auth_header.split()
 
         if len(parts) != 2 or parts[0].lower() != "bearer":
-            return jsonify({"error": "No or invalid authorization header"}), 403
+            print("Invalid authorization header format")
+            return {"error": "No or invalid authorization header"}, 403
 
         token = parts[1]
         if not token:
-            return jsonify({"error": "No authorization provided"}), 403
+            print("No token found in authorization header")
+            return {"error": "No authorization provided"}, 403
 
         return f(*args, **kwargs)
 

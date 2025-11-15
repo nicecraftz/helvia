@@ -12,9 +12,9 @@ event_bp = Blueprint('event', __name__, url_prefix='/api/event')
 
 @event_bp.get('/')
 def get_events():
-    events = Event.query.all()
+    events : list[Event] = Event.query.all()
     all_events = {event.id: event for event in events}
-    return [event.__dict__ for event in all_events.values()], 200
+    return [event.to_dict() for event in all_events.values()], 200
 
 @event_bp.post('/')
 @require_auth
@@ -67,8 +67,8 @@ def participate_event(event_id: int):
 
 @event_bp.get('/<int:event_id>')
 def get_event(event_id: int):
-    event = Event.query.filter_by(id=event_id).first()
+    event : Event = Event.query.filter_by(id=event_id).first()
     if event:
-        return event.__dict__, 200
+        return event.to_dict(), 200
     else:
         return {"error": "Event not found"}, 404

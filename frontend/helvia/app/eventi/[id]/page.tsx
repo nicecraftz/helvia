@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/navbar";
 import {
@@ -18,16 +18,37 @@ import {
 
 export default function EventDetailPage() {
   const router = useRouter();
+  const params = useParams();
+  const eventId = params.id;
+  const [event, setEvent] = useState(null);
   const [isParticipating, setIsParticipating] = useState(false);
   const [canShare, setCanShare] = useState(true);
 
   useEffect(() => {
+    // Carica preferenze dal localStorage
     const preferences = localStorage.getItem("userPreferences");
     if (preferences) {
       const parsed = JSON.parse(preferences);
       setCanShare(parsed.shareActivity);
     }
   }, []);
+
+  useEffect(() => {
+    async function fetchEvent() {
+      try {
+        const res = await fetch(`/api/event/${eventId}`);
+        if (res.ok) {
+          const data = await res.json();
+          setEvent(data);
+        } else {
+          console.error("Errore nel recupero evento");
+        }
+      } catch (e) {
+        console.error("Errore nella fetch evento:", e);
+      }
+    }
+    if (eventId) fetchEvent();
+  }, [eventId]);
 
   const handleParticipate = () => {
     if (!canShare) {
@@ -37,14 +58,17 @@ export default function EventDetailPage() {
       return;
     }
     setIsParticipating(!isParticipating);
+    // Qui potresti chiamare API per partecipazione evento
   };
+
+  if (!event) return <p>Caricamento...</p>;
 
   return (
     <div className="min-h-screen bg-background pb-20">
       <div className="relative h-80">
         <img
-          src="/placeholder.svg?height=600&width=1200"
-          alt="Evento"
+          src={event.image_url || "/placeholder.svg"}
+          alt={event.title}
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
@@ -56,16 +80,18 @@ export default function EventDetailPage() {
         </button>
 
         <div className="absolute bottom-6 left-6">
-          <span className="inline-block px-5 py-2 bg-purple-500/90 backdrop-blur-md text-white text-sm font-semibold rounded-full shadow-lg border border-purple-400/50">
-            🎵 Musica Classica
-          </span>
+          {event.topics && event.topics.length > 0 && (
+            <span className="inline-block px-5 py-2 bg-purple-500/90 backdrop-blur-md text-white text-sm font-semibold rounded-full shadow-lg border border-purple-400/50">
+              {event.topics[0].name}
+            </span>
+          )}
         </div>
       </div>
 
       <div className="max-w-4xl mx-auto px-6 -mt-8 relative z-10 space-y-8 pb-8">
         <div className="glass-effect rounded-3xl p-8 shadow-2xl border-2 border-primary/20">
           <h1 className="text-4xl font-bold text-foreground mb-6 leading-tight">
-            Concerto al Teatro Lauro Rossi
+            {event.title}
           </h1>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -78,7 +104,7 @@ export default function EventDetailPage() {
                   Data
                 </p>
                 <p className="text-sm font-semibold text-foreground">
-                  15 Marzo 2025
+                  {new Date(event.start_datetime).toLocaleDateString("it-IT")}
                 </p>
               </div>
             </div>
@@ -92,7 +118,15 @@ export default function EventDetailPage() {
                   Orario
                 </p>
                 <p className="text-sm font-semibold text-foreground">
-                  20:30 - 22:30
+                  {new Date(event.start_datetime).toLocaleTimeString("it-IT", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                  {" - "}
+                  {new Date(event.end_datetime).toLocaleTimeString("it-IT", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
                 </p>
               </div>
             </div>
@@ -106,7 +140,7 @@ export default function EventDetailPage() {
                   Luogo
                 </p>
                 <p className="text-sm font-semibold text-foreground">
-                  Teatro Lauro Rossi
+                  {event.location || "Posizione non disponibile"}
                 </p>
               </div>
             </div>
@@ -119,7 +153,13 @@ export default function EventDetailPage() {
                 <p className="text-xs text-muted-foreground font-medium">
                   Ingresso
                 </p>
-                <p className="text-sm font-semibold text-green-600">Gratuito</p>
+                <p
+                  className={`text-sm font-semibold ${
+                    event.cost === 0 ? "text-green-600" : "text-foreground"
+                  }`}
+                >
+                  {event.cost === 0 ? "Gratuito" : `${event.cost} €`}
+                </p>
               </div>
             </div>
           </div>
@@ -131,7 +171,7 @@ export default function EventDetailPage() {
               </div>
               <div>
                 <p className="text-sm font-semibold text-foreground">
-                  127 persone partecipano
+                  {event.participants} persone partecipano
                 </p>
                 <p className="text-xs text-muted-foreground">
                   Unisciti a loro!
@@ -147,12 +187,7 @@ export default function EventDetailPage() {
             📖 Descrizione
           </h2>
           <p className="text-foreground/90 leading-relaxed text-base">
-            Un concerto straordinario che celebra la musica classica italiana
-            nel magnifico Teatro Lauro Rossi. L'Orchestra Sinfonica di Macerata
-            eseguirà le opere più amate di Rossini, Verdi e Puccini.
-            Un'esperienza culturale unica nel cuore della città, perfetta per
-            gli amanti della musica classica e per chi vuole scoprire il
-            patrimonio musicale italiano.
+            {event.description}
           </p>
 
           <div className="mt-6 pt-6 border-t border-border/50">
@@ -160,46 +195,20 @@ export default function EventDetailPage() {
               Cosa aspettarsi
             </h3>
             <ul className="space-y-2 text-foreground/80">
+              {/* Puoi eventualmente inserire punti dinamici se disponibili */}
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                <span>Repertorio di opere celebri italiane</span>
+                <span>Evento unico e coinvolgente</span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                <span>Orchestra Sinfonica di Macerata</span>
+                <span>Partecipazione attiva consigliata</span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                <span>Atmosfera elegante e culturale</span>
+                <span>Incontri con esperti del settore</span>
               </li>
             </ul>
-          </div>
-        </div>
-
-        <div className="glass-effect rounded-3xl p-8 shadow-xl border-2 border-secondary/30 bg-gradient-to-br from-secondary/5 to-accent/5">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-secondary to-accent flex items-center justify-center shadow-lg">
-              <Sparkles className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent">
-                Perché l'AI lo consiglia
-              </h2>
-              <p className="text-xs text-muted-foreground">
-                Raccomandazione personalizzata per te
-              </p>
-            </div>
-          </div>
-          <p className="text-foreground/90 leading-relaxed">
-            Questo evento è perfetto per te! Basandoci sui tuoi interessi
-            passati per eventi culturali e musicali, crediamo che ti piacerà.
-            Inoltre, è molto popolare tra gli studenti universitari e offre
-            un'ottima opportunità per socializzare con persone che condividono i
-            tuoi interessi.
-          </p>
-          <div className="mt-4 flex items-center gap-2 text-sm text-secondary font-medium">
-            <div className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
-            Match AI: 95%
           </div>
         </div>
 
@@ -236,7 +245,6 @@ export default function EventDetailPage() {
           </Button>
         </div>
       </div>
-
       <Navbar />
     </div>
   );

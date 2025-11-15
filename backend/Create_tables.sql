@@ -24,6 +24,14 @@ CREATE TABLE events (
     FOREIGN KEY (author_id) REFERENCES customers(id) ON DELETE SET NULL
 );
 
+CREATE TABLE event_participants (
+    event_id INT NOT NULL,
+    user_id INT NOT NULL,
+    PRIMARY KEY (event_id, user_id),
+    FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 CREATE TABLE event_topics (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -33,8 +41,8 @@ CREATE TABLE event_topics (
 
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    surname VARCHAR(100) NOT NULL,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
     username VARCHAR(50) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
     password_bcrypt VARCHAR(255) NOT NULL,
@@ -59,5 +67,6 @@ CREATE TABLE user_interests (
 CREATE TABLE events_interests (
     id INT AUTO_INCREMENT PRIMARY KEY,
     interest VARCHAR(100) NOT NULL,
-    user_id INT NOT NULL
+    user_id INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );

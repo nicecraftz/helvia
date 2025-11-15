@@ -1,9 +1,7 @@
-from flask_sqlalchemy import SQLAlchemy
+from Alchemy import db
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from models.event import Event
 import bcrypt
-
-from Alchemy import db
 
 class Customer(db.Model):
     __tablename__ = "customers"
@@ -23,6 +21,17 @@ class Customer(db.Model):
         backref="author",
         lazy="selectin",
     )
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "email": self.email,
+            "company_name": self.company_name,
+            "vat_code": self.vat_code,
+            "username": self.username,
+        }
 
     @staticmethod
     def from_dict(data: dict) -> "Customer":

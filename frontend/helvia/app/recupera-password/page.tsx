@@ -1,27 +1,33 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { ArrowLeft, Mail, CheckCircle2, Sparkles } from 'lucide-react'
+import { useState } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { ArrowLeft, Mail, CheckCircle2, Sparkles } from "lucide-react";
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState('')
-  const [submitted, setSubmitted] = useState(false)
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setSubmitted(true)
-  }
+    e.preventDefault();
+    setSubmitted(true);
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-background relative overflow-hidden">
       <div className="fixed inset-0 overflow-hidden pointer-events-none opacity-20">
         <div className="absolute top-20 left-10 w-96 h-96 bg-primary/30 rounded-full filter blur-3xl animate-float" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-secondary/30 rounded-full filter blur-3xl animate-float" style={{ animationDelay: '2s' }} />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-accent/30 rounded-full filter blur-3xl animate-float" style={{ animationDelay: '4s' }} />
+        <div
+          className="absolute bottom-20 right-10 w-96 h-96 bg-secondary/30 rounded-full filter blur-3xl animate-float"
+          style={{ animationDelay: "2s" }}
+        />
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-accent/30 rounded-full filter blur-3xl animate-float"
+          style={{ animationDelay: "4s" }}
+        />
       </div>
 
       <div className="w-full max-w-md space-y-6 relative z-10">
@@ -45,7 +51,7 @@ export default function ForgotPasswordPage() {
             Helvia
           </h1>
           <p className="text-xl font-semibold text-foreground">
-            {submitted ? 'Email Inviata!' : 'Recupera Password'}
+            {submitted ? "Email Inviata!" : "Recupera Password"}
           </p>
         </div>
 
@@ -57,13 +63,17 @@ export default function ForgotPasswordPage() {
                   Non ti preoccupare
                 </h2>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Inserisci il tuo indirizzo email e ti invieremo un link magico per reimpostare la tua password
+                  Inserisci il tuo indirizzo email e ti invieremo un link magico
+                  per reimpostare la tua password
                 </p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-foreground font-medium">
+                  <Label
+                    htmlFor="email"
+                    className="text-foreground font-medium"
+                  >
                     Indirizzo Email
                   </Label>
                   <div className="relative">
@@ -96,23 +106,27 @@ export default function ForgotPasswordPage() {
                 </div>
                 <div className="absolute inset-0 w-24 h-24 mx-auto">
                   <Sparkles className="absolute top-0 right-0 w-6 h-6 text-green-500 animate-ping" />
-                  <Sparkles className="absolute bottom-2 left-2 w-5 h-5 text-green-400 animate-ping" style={{ animationDelay: '1s' }} />
+                  <Sparkles
+                    className="absolute bottom-2 left-2 w-5 h-5 text-green-400 animate-ping"
+                    style={{ animationDelay: "1s" }}
+                  />
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <h2 className="text-2xl font-bold text-foreground">
                   Controlla la tua email!
                 </h2>
                 <p className="text-sm text-muted-foreground leading-relaxed px-4">
-                  Abbiamo inviato le istruzioni per reimpostare la password a{' '}
+                  Abbiamo inviato le istruzioni per reimpostare la password a{" "}
                   <span className="font-semibold text-foreground">{email}</span>
                 </p>
               </div>
 
               <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 space-y-2">
                 <p className="text-xs text-muted-foreground">
-                  💡 Non hai ricevuto l'email? Controlla la cartella spam o riprova tra qualche minuto.
+                  💡 Non hai ricevuto l'email? Controlla la cartella spam o
+                  riprova tra qualche minuto.
                 </p>
               </div>
 
@@ -126,5 +140,5 @@ export default function ForgotPasswordPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

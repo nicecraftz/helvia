@@ -1,6 +1,8 @@
 from flask import Flask
-from AlchemyJWT import db        
+from Alchemy import db        
 import os
+
+SECRET_KEY = os.getenv("JWT_SECRET_KEY", "default_secret_key")
 
 def create_app() -> Flask:
     app = Flask(__name__)
@@ -28,6 +30,12 @@ def create_app() -> Flask:
 
     from routes.alg_routes import alg_bp
     app.register_blueprint(alg_bp)
+
+    from routes.user_routes import user_bp
+    app.register_blueprint(user_bp)
+    
+    from routes.customer_routes import customer_bp
+    app.register_blueprint(customer_bp)
 
     return app
 

@@ -1,37 +1,84 @@
-'use client'
+"use client";
 
-import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import Navbar from '@/components/navbar'
-import { Award, Lock, Settings, LogOut, TrendingUp, Calendar, Heart, Camera, Tag } from 'lucide-react'
-import Link from 'next/link'
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Navbar from "@/components/navbar";
+import {
+  Award,
+  Settings,
+  LogOut,
+  TrendingUp,
+  Calendar,
+  Heart,
+  Camera,
+  Tag,
+} from "lucide-react";
+import Link from "next/link";
 
 export default function ProfilePage() {
-  const router = useRouter()
+  const router = useRouter();
+  const [user, setUser] = useState<any>(null);
+  const [interests, setInterests] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const handleLogout = () => {
-    router.push('/login')
+    router.push("/login");
+  };
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        // 1️⃣ USER INFO
+        const resUser = await fetch("/api/me");
+        if (resUser.ok) {
+          const data = await resUser.json();
+          setUser(data);
+        }
+
+        // 2️⃣ USER INTERESTS
+        const resInterests = await fetch("/api/interests");
+        if (resInterests.ok) {
+          const data = await resInterests.json();
+          setInterests(data.interests || []);
+        }
+      } catch (err) {
+        console.error("Errore caricamento profilo:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="p-10 text-center text-muted-foreground">
+        Caricamento...
+      </div>
+    );
   }
 
-  const aiProfile = {
-    musica: 60,
-    cultura: 30,
-    sociale: 10,
+  if (!user) {
+    return <div className="p-10 text-center">Errore caricamento utente</div>;
   }
 
-  const userInterests = ['Musica', 'Arte']
+  const aiProfile = { musica: 60, cultura: 30, sociale: 10 };
 
   return (
     <div className="min-h-screen bg-background pb-24">
       <div className="max-w-screen-xl mx-auto px-6 py-8 space-y-8">
+        {/* CARD PROFILO */}
         <div className="glass-effect rounded-3xl p-8 shadow-xl border-2 border-primary/20 animate-in fade-in slide-in-from-top duration-500">
           <div className="flex items-start gap-6 mb-8">
             <div className="relative group">
               <Avatar className="w-24 h-24 border-4 border-primary shadow-lg">
                 <AvatarImage src="/placeholder.svg?height=96&width=96" />
                 <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-white text-3xl font-bold">
-                  MR
+                  {user.first_name?.[0]}
+                  {user.last_name?.[0]}
                 </AvatarFallback>
               </Avatar>
               <div className="absolute inset-0 bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
@@ -40,14 +87,10 @@ export default function ProfilePage() {
             </div>
             <div className="flex-1">
               <h1 className="text-3xl font-bold text-foreground mb-1">
-                Mario Rossi
+                {user.first_name} {user.last_name}
               </h1>
-              <p className="text-muted-foreground">@mariorossi</p>
-              <p className="text-sm text-muted-foreground mt-1">
-  
-  
-  
-               </p>
+              <p className="text-muted-foreground">@{user.username}</p>
+
               <div className="flex gap-2 mt-3">
                 <span className="px-3 py-1 bg-primary/20 text-primary text-xs font-medium rounded-full border border-primary/30">
                   Esploratore di Macerata
@@ -62,7 +105,9 @@ export default function ProfilePage() {
                 <TrendingUp className="w-7 h-7 text-primary" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground font-medium">Livello</p>
+                <p className="text-sm text-muted-foreground font-medium">
+                  Livello
+                </p>
                 <p className="text-4xl font-bold text-primary">5</p>
               </div>
             </div>
@@ -71,61 +116,16 @@ export default function ProfilePage() {
                 <Calendar className="w-7 h-7 text-secondary" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground font-medium">Eventi</p>
+                <p className="text-sm text-muted-foreground font-medium">
+                  Eventi
+                </p>
                 <p className="text-4xl font-bold text-secondary">23</p>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="glass-effect rounded-3xl p-6 shadow-xl border-2 border-secondary/20 animate-in fade-in slide-in-from-left duration-500 delay-100">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-gradient-to-br from-secondary to-accent rounded-xl flex items-center justify-center">
-              <Heart className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-foreground">Il Tuo Profilo AI</h2>
-              <p className="text-xs text-muted-foreground">Generato automaticamente dai tuoi interessi</p>
-            </div>
-          </div>
-          
-          <div className="space-y-3">
-            <div>
-              <div className="flex justify-between text-sm mb-2">
-                <span className="text-foreground font-medium">Musica</span>
-                <span className="text-primary font-bold">{aiProfile.musica}%</span>
-              </div>
-              <div className="h-3 bg-muted/30 rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-primary to-secondary rounded-full transition-all duration-1000" style={{ width: `${aiProfile.musica}%` }} />
-              </div>
-            </div>
-            <div>
-              <div className="flex justify-between text-sm mb-2">
-                <span className="text-foreground font-medium">Cultura</span>
-                <span className="text-secondary font-bold">{aiProfile.cultura}%</span>
-              </div>
-              <div className="h-3 bg-muted/30 rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-secondary to-accent rounded-full transition-all duration-1000" style={{ width: `${aiProfile.cultura}%` }} />
-              </div>
-            </div>
-            <div>
-              <div className="flex justify-between text-sm mb-2">
-                <span className="text-foreground font-medium">Sociale</span>
-                <span className="text-accent font-bold">{aiProfile.sociale}%</span>
-              </div>
-              <div className="h-3 bg-muted/30 rounded-full overflow-hidden">
-                <div className="h-full bg-accent rounded-full transition-all duration-1000" style={{ width: `${aiProfile.sociale}%` }} />
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-4 p-4 bg-secondary/10 border border-secondary/20 rounded-xl">
-            <p className="text-xs text-foreground leading-relaxed">
-              💡 <span className="font-semibold">Insight:</span> Stai mostrando un forte interesse per eventi musicali e culturali. Ti piacciono gli eventi serali negli ultimi giorni!
-            </p>
-          </div>
-        </div>
-
+        {/* INTERESTS CARD */}
         <div className="glass-effect rounded-3xl p-6 shadow-xl border-2 border-primary/20 animate-in fade-in slide-in-from-left duration-500 delay-150">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
@@ -133,80 +133,44 @@ export default function ProfilePage() {
                 <Tag className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-foreground">I Tuoi Interessi</h2>
-                <p className="text-xs text-muted-foreground">Categorie che segui</p>
+                <h2 className="text-xl font-bold text-foreground">
+                  I Tuoi Interessi
+                </h2>
+                <p className="text-xs text-muted-foreground">
+                  Categorie che segui
+                </p>
               </div>
             </div>
             <Link href="/profilo/interessi">
-              <Button variant="ghost" className="text-primary hover:text-secondary font-medium">
+              <Button
+                variant="ghost"
+                className="text-primary hover:text-secondary font-medium"
+              >
                 Modifica →
               </Button>
             </Link>
           </div>
-          
+
           <div className="flex flex-wrap gap-2">
-            {userInterests.map((interest) => (
-              <span 
-                key={interest}
-                className="px-4 py-2 bg-primary/20 text-primary text-sm font-medium rounded-full border-2 border-primary/30"
-              >
-                {interest}
-              </span>
-            ))}
+            {interests.length > 0 ? (
+              interests.map((interest) => (
+                <span
+                  key={interest}
+                  className="px-4 py-2 bg-primary/20 text-primary text-sm font-medium rounded-full border-2 border-primary/30"
+                >
+                  {interest}
+                </span>
+              ))
+            ) : (
+              <p className="text-muted-foreground text-sm">
+                Nessun interesse selezionato
+              </p>
+            )}
           </div>
         </div>
 
-        <div className="glass-effect rounded-3xl p-6 shadow-xl border-2 border-accent/20 animate-in fade-in slide-in-from-right duration-500 delay-200">
-          <div className="flex items-center justify-between mb-5">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-accent to-primary rounded-xl flex items-center justify-center">
-                <Award className="w-5 h-5 text-white" />
-              </div>
-              <h2 className="text-xl font-bold text-foreground">Riconoscimenti</h2>
-            </div>
-            <Link href="/riconoscimenti">
-              <Button variant="ghost" className="text-primary hover:text-secondary font-medium">
-                Vedi tutti →
-              </Button>
-            </Link>
-          </div>
-          <div className="grid grid-cols-3 gap-4">
-            {[
-              { icon: '🎵', name: 'Amante Musica', color: 'from-purple-500 to-pink-500' },
-              { icon: '🎨', name: 'Arte Lover', color: 'from-cyan-500 to-blue-500' },
-              { icon: '⭐', name: 'Top Explorer', color: 'from-yellow-500 to-orange-500' },
-            ].map((badge, i) => (
-              <div
-                key={i}
-                className="flex flex-col items-center gap-3 p-4 bg-card rounded-2xl border-2 border-border/50 hover:border-primary/50 transition-all hover:scale-105 cursor-pointer"
-              >
-                <div className={`w-16 h-16 bg-gradient-to-br ${badge.color} rounded-xl flex items-center justify-center shadow-lg text-2xl`}>
-                  {badge.icon}
-                </div>
-                <p className="text-xs text-center text-foreground font-semibold">
-                  {badge.name}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-
+        {/* LOGOUT */}
         <div className="space-y-9 animate-in fade-in slide-in-from-bottom duration-500 delay-300">
-
-
-          <Link href="/profilo/preferenze">
-            <Button
-              variant="outline"
-              className="w-full justify-start gap-4 glass-effect border-2 border-border/50 rounded-2xl py-7 text-lg hover:bg-primary/5 hover:border-primary/50 transition-all hover:scale-[1.02] mb-4"
-
-            >
-              <div className="w-11 h-11 bg-secondary/10 rounded-xl flex items-center justify-center">
-                <Settings className="w-5 h-5 text-secondary" />
-              </div>
-              <span className="font-medium">Preferenze</span>
-            </Button>
-          </Link>
-
           <Button
             onClick={handleLogout}
             variant="outline"
@@ -222,5 +186,5 @@ export default function ProfilePage() {
 
       <Navbar />
     </div>
-  )
+  );
 }

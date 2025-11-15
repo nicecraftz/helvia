@@ -1,3 +1,4 @@
+from app import SECRET_KEY
 from Alchemy import db
 from models.user import User
 
@@ -6,8 +7,6 @@ import bcrypt
 import jwt
 
 def register_user(payload: dict) -> tuple:
-    import os                 
-    SECRET_KEY = os.getenv("JWT_SECRET_KEY", "default_secret_key")
     new_user = User.from_dict(payload)
     db.session.add(new_user)
     db.session.commit()
@@ -19,18 +18,19 @@ def register_user(payload: dict) -> tuple:
     }
 
     token = jwt.encode(claims, SECRET_KEY, algorithm="HS256")
-    return token
+    return {
+        "token": token
+    }
 
 def login_user(payload: dict):
-    import os                 
-    SECRET_KEY = os.getenv("JWT_SECRET_KEY", "default_secret_key")
-    user : User = User.query.filter_by(username=payload.get("username")).first()
-    if not user :
+    user : User = User.query.filter_by(username=payload["username"]).first()
+    
+    if not user:
         return {
             "error": "User not found"
         }
     
-    if not bcrypt.checkpw(payload.password.encode('utf-8'), user.password_bcrypt.encode('utf-8')):
+    if not bcrypt.checkpw(payload["password"].encode('utf-8'), user.password_bcrypt.encode('utf-8')):
         return {
             "error": "Incorrect password"
         }
@@ -42,4 +42,6 @@ def login_user(payload: dict):
     }
 
     token = jwt.encode(claims, SECRET_KEY, algorithm="HS256")
-    return token
+    return {
+        "token": token
+    }

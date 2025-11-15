@@ -1,8 +1,12 @@
-from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
-
 from Alchemy import db
+from models.user import User
+
+class EventParticipant(db.Model):
+    __tablename__ = "event_participants"
+    event_id: Mapped[int] = mapped_column(db.Integer, db.ForeignKey("events.id", ondelete="CASCADE"), primary_key=True)
+    user_id: Mapped[int] = mapped_column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
 
 class Event(db.Model):
     __tablename__ = "events"
@@ -16,7 +20,14 @@ class Event(db.Model):
     image_url: Mapped[str | None] = mapped_column(db.String(255), nullable=True)
     link: Mapped[str | None] = mapped_column(db.String(255), nullable=True)
     sponsored: Mapped[bool] = mapped_column(db.Boolean, nullable=False, default=False)
-    participants: Mapped[int] = mapped_column(db.Integer, nullable=False, default=0)
+
+    participants = relationship(
+        "User",
+        secondary="event_participants",
+        backref="events_participated",
+        lazy="selectin",
+    )
+    
     author_id: Mapped[int | None] = mapped_column(
         db.Integer,
         db.ForeignKey("customers.id", ondelete="SET NULL"),
@@ -43,6 +54,22 @@ class Event(db.Model):
             participants=data.get("participants", 0),
             author_id=data.get("author_id", None),
         )
+    
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "title": self.title,
+            "description": self.description,
+            "start_datetime": self.start_datetime.isoformat(),
+            "end_datetime": self.end_datetime.isoformat(),
+            "cost": self.cost,
+            "image_url": self.image_url,
+            "link": self.link,
+            "sponsored": self.sponsored,
+            "participation_count": len(self.participants),
+            "author_id": self.author_id,
+            "topics": [topic.name for topic in self.topics],
+        }
 
 class EventTopic(db.Model):
     __tablename__ = "event_topics"
