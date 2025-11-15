@@ -1,11 +1,14 @@
 from flask import Flask
 from Alchemy import db        
 import os
+from flask_cors import CORS
 
 SECRET_KEY = os.getenv("JWT_SECRET_KEY", "default_secret_key")
 
 def create_app() -> Flask:
     app = Flask(__name__)
+
+    CORS(app, resources={r"/api/*": {"origins": "*"}})
 
     DB_USER = os.getenv("DB_USER", "root")
     DB_PASSWORD = os.getenv("DB_PASSWORD", "your_root_password")

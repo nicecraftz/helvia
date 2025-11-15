@@ -10,22 +10,39 @@ import {
   MapPin,
   Clock,
   Euro,
-  Sparkles,
   Users,
   Share2,
   CheckCircle2,
 } from "lucide-react";
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+
+// Tipizzazione dell'evento
+interface EventType {
+  id: number;
+  title: string;
+  description: string;
+  start_datetime: string;
+  end_datetime: string;
+  cost: number;
+  image_url: string;
+  link: string;
+  sponsored: boolean;
+  participation_count: number;
+  author_id: number | null;
+  topics: string[];
+}
+
 export default function EventDetailPage() {
   const router = useRouter();
   const params = useParams();
   const eventId = params.id;
-  const [event, setEvent] = useState(null);
+  const [event, setEvent] = useState<EventType | null>(null);
   const [isParticipating, setIsParticipating] = useState(false);
   const [canShare, setCanShare] = useState(true);
 
+  // Carica preferenze utente dal localStorage
   useEffect(() => {
-    // Carica preferenze dal localStorage
     const preferences = localStorage.getItem("userPreferences");
     if (preferences) {
       const parsed = JSON.parse(preferences);
@@ -33,12 +50,14 @@ export default function EventDetailPage() {
     }
   }, []);
 
+  // Fetch evento dal backend
   useEffect(() => {
     async function fetchEvent() {
+      if (!eventId) return;
       try {
-        const res = await fetch(`/api/event/${eventId}`);
+        const res = await fetch(`${BACKEND_URL}/api/event/${eventId}`);
         if (res.ok) {
-          const data = await res.json();
+          const data: EventType = await res.json();
           setEvent(data);
         } else {
           console.error("Errore nel recupero evento");
@@ -47,7 +66,7 @@ export default function EventDetailPage() {
         console.error("Errore nella fetch evento:", e);
       }
     }
-    if (eventId) fetchEvent();
+    fetchEvent();
   }, [eventId]);
 
   const handleParticipate = () => {
@@ -58,7 +77,7 @@ export default function EventDetailPage() {
       return;
     }
     setIsParticipating(!isParticipating);
-    // Qui potresti chiamare API per partecipazione evento
+    // Qui puoi aggiungere chiamata API per partecipazione evento
   };
 
   if (!event) return <p>Caricamento...</p>;
@@ -82,7 +101,7 @@ export default function EventDetailPage() {
         <div className="absolute bottom-6 left-6">
           {event.topics && event.topics.length > 0 && (
             <span className="inline-block px-5 py-2 bg-purple-500/90 backdrop-blur-md text-white text-sm font-semibold rounded-full shadow-lg border border-purple-400/50">
-              {event.topics[0].name}
+              {event.topics[0]}
             </span>
           )}
         </div>
@@ -121,8 +140,8 @@ export default function EventDetailPage() {
                   {new Date(event.start_datetime).toLocaleTimeString("it-IT", {
                     hour: "2-digit",
                     minute: "2-digit",
-                  })}
-                  {" - "}
+                  })}{" "}
+                  -{" "}
                   {new Date(event.end_datetime).toLocaleTimeString("it-IT", {
                     hour: "2-digit",
                     minute: "2-digit",
@@ -136,11 +155,9 @@ export default function EventDetailPage() {
                 <MapPin className="w-6 h-6 text-accent" />
               </div>
               <div>
-                <p className="text-xs text-muted-foreground font-medium">
-                  Luogo
-                </p>
+                <p className="text-xs text-muted-foreground font-medium">Luogo</p>
                 <p className="text-sm font-semibold text-foreground">
-                  {event.location || "Posizione non disponibile"}
+                  {event.link || "Posizione non disponibile"}
                 </p>
               </div>
             </div>
@@ -150,9 +167,7 @@ export default function EventDetailPage() {
                 <Euro className="w-6 h-6 text-green-600" />
               </div>
               <div>
-                <p className="text-xs text-muted-foreground font-medium">
-                  Ingresso
-                </p>
+                <p className="text-xs text-muted-foreground font-medium">Ingresso</p>
                 <p
                   className={`text-sm font-semibold ${
                     event.cost === 0 ? "text-green-600" : "text-foreground"
@@ -171,11 +186,9 @@ export default function EventDetailPage() {
               </div>
               <div>
                 <p className="text-sm font-semibold text-foreground">
-                  {event.participants} persone partecipano
+                  {event.participation_count} persone partecipano
                 </p>
-                <p className="text-xs text-muted-foreground">
-                  Unisciti a loro!
-                </p>
+                <p className="text-xs text-muted-foreground">Unisciti a loro!</p>
               </div>
             </div>
             <Share2 className="w-5 h-5 text-muted-foreground" />
@@ -195,7 +208,6 @@ export default function EventDetailPage() {
               Cosa aspettarsi
             </h3>
             <ul className="space-y-2 text-foreground/80">
-              {/* Puoi eventualmente inserire punti dinamici se disponibili */}
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                 <span>Evento unico e coinvolgente</span>

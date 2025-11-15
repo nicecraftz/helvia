@@ -5,7 +5,25 @@ import Link from 'next/link'
 import Navbar from '@/components/navbar'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Search, Calendar, MapPin, Filter, Users, Euro } from 'lucide-react'
+import { Search, Calendar, MapPin, Users, Euro } from 'lucide-react'
+
+// ✅ Tipi TypeScript aggiornati
+interface EventType {
+  id: number
+  title: string
+  description: string
+  start_datetime: string
+  end_datetime: string
+  cost: number
+  image_url: string
+  link: string
+  sponsored: boolean
+  participation_count: number
+  author_id: number | null
+  topics: string[] // array di stringhe
+  location?: string
+  participants?: number
+}
 
 const categories = ['Tutti', 'Musica', 'Arte', 'Cinema', 'Workshop', 'Sociale', 'Teatro']
 
@@ -15,19 +33,17 @@ const categoryColors = [
 ]
 
 export default function EventsPage() {
-  const [events, setEvents] = useState([])
+  const [events, setEvents] = useState<EventType[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('Tutti')
-  const [showFilters, setShowFilters] = useState(false)
   const [priceFilter, setPriceFilter] = useState('Tutti')
-  const [dateFilter, setDateFilter] = useState('Tutti')
 
   useEffect(() => {
     async function fetchEvents() {
       try {
         const res = await fetch('/api/event/')
         if (res.ok) {
-          const data = await res.json()
+          const data: EventType[] = await res.json()
           setEvents(data)
         } else {
           console.error('Failed to fetch events')
@@ -39,11 +55,12 @@ export default function EventsPage() {
     fetchEvents()
   }, [])
 
+  // Filtro eventi
   const filteredEvents = events.filter(event => {
     const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesCategory =
       selectedCategory === 'Tutti' ||
-      event.topics?.some((topic) => topic.name === selectedCategory)
+      event.topics.some(topic => topic.toLowerCase() === selectedCategory.toLowerCase())
     const matchesPrice =
       priceFilter === 'Tutti' || (priceFilter === 'Gratuito' ? event.cost === 0 : event.cost !== 0)
     return matchesSearch && matchesCategory && matchesPrice
@@ -84,11 +101,15 @@ export default function EventsPage() {
         <div className="space-y-8">
           <p className="text-sm text-muted-foreground">{filteredEvents.length} eventi trovati</p>
 
-          {filteredEvents.map(event => (
+          {filteredEvents.map((event: EventType) => (
             <Link key={event.id} href={`/eventi/${event.id}`}>
               <div className="bg-card rounded-2xl mb-15 overflow-hidden shadow-md hover:shadow-xl transition-all hover:scale-[1.01] cursor-pointer border border-border/50">
                 <div className="relative">
-                  <img src={event.image_url || "/placeholder.svg"} alt={event.title} className="w-full h-48 object-cover" />
+                  <img
+                    src={event.image_url || "/placeholder.svg"}
+                    alt={event.title}
+                    className="w-full h-48 object-cover"
+                  />
                   <div className="absolute top-4 right-4 px-4 py-2 bg-card/95 backdrop-blur-sm rounded-full border border-border/50 shadow-lg">
                     {event.cost === 0 ? (
                       <span className="text-green-600 font-bold text-sm flex items-center gap-1">
@@ -104,18 +125,22 @@ export default function EventsPage() {
                   </div>
                 </div>
                 <div className="p-5 space-y-4">
+                  {/* Tag */}
                   <div className="flex flex-wrap gap-2">
-                    {(event.topics || []).map((topic, idx) => (
-                      <span
-                        key={idx}
-                        className={`inline-block px-3 py-1 text-xs font-medium rounded-full border ${
-                          categoryColors[idx % categoryColors.length]
-                        }`}
-                      >
-                        {topic.name}
-                      </span>
-                    ))}
+                    {event.topics
+                      .flatMap(t => t.split(',').map(s => s.trim()))
+                      .map((topic, idx) => (
+                        <span
+                          key={idx}
+                          className={`inline-block px-3 py-1 text-xs font-medium rounded-full border ${
+                            categoryColors[idx % categoryColors.length]
+                          }`}
+                        >
+                          {topic}
+                        </span>
+                      ))}
                   </div>
+
                   <h3 className="text-xl font-semibold text-foreground">{event.title}</h3>
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 text-sm text-foreground/80">
@@ -128,7 +153,7 @@ export default function EventsPage() {
                     </div>
                     <div className="flex items-center gap-2 text-sm text-foreground/80">
                       <Users className="w-4 h-4 text-accent" />
-                      {event.participants} partecipanti
+                      {event.participants || 0} partecipanti
                     </div>
                   </div>
                 </div>

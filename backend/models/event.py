@@ -19,6 +19,7 @@ class Event(db.Model):
     cost: Mapped[int] = mapped_column(db.Integer, nullable=False)
     image_url: Mapped[str | None] = mapped_column(db.String(255), nullable=True)
     link: Mapped[str | None] = mapped_column(db.String(255), nullable=True)
+    address_position: Mapped[str | None] = mapped_column(db.String(255), nullable=True)
     sponsored: Mapped[bool] = mapped_column(db.Boolean, nullable=False, default=False)
 
     participants = relationship(
@@ -50,6 +51,7 @@ class Event(db.Model):
             cost=data.get("cost", 0),
             image_url=data.get("image_url"),
             link=data.get("link"),
+            address_position=data.get("address_position"),
             sponsored=data.get("sponsored", False),
             participants=data.get("participants", 0),
             author_id=data.get("author_id", None),
@@ -65,6 +67,7 @@ class Event(db.Model):
             "cost": self.cost,
             "image_url": self.image_url,
             "link": self.link,
+            "address_position": self.address_position,
             "sponsored": self.sponsored,
             "participation_count": len(self.participants),
             "author_id": self.author_id,

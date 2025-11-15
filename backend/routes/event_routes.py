@@ -69,6 +69,7 @@ def participate_event(event_id: int):
 def get_event(event_id: int):
     event : Event = Event.query.filter_by(id=event_id).first()
     if event:
+        print(event.to_dict())
         return event.to_dict(), 200
     else:
         return {"error": "Event not found"}, 404
