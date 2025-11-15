@@ -1,7 +1,5 @@
-from flask_sqlalchemy import SQLAlchemy
 from models.event import Event
 from models.customer import Customer
-
 from Alchemy import db
 
 def create(payload: dict, customer: Customer):

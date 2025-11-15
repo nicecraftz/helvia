@@ -1,11 +1,9 @@
+from app import db,SECRET_KEY
 from flask import Blueprint, request
 from models.event import Event
 from models.customer import Customer
+from models.user import User
 from services.event_service import create
-
-import os                 
-
-SECRET_KEY = os.getenv("JWT_SECRET_KEY", "default_secret_key")
 
 import jwt
 
@@ -35,6 +33,43 @@ def create_event():
         }, 404
     
     return create(payload, customer)
+
+@event_bp.put('/<int:event_id>/participate')
+def participate_event(event_id: int):
+    token = request.headers.get("Authorization").split(" ")[1]
+    if not token or token == "":
+        return {
+            "error": "No authorization provided"
+        }, 403
+    
+    decoded_jwt = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+    user = User.query.filter_by(id=decoded_jwt.get("user_id")).first()
+
+    if not user:
+        return {
+            "error": "Customer not found"
+        }, 404
+    
+    event = Event.query.filter_by(id=event_id).first()
+    if not event:
+        return {
+            "error": "Event not found"
+        }, 404
+    
+    if user in event.participants:
+        return {
+            "message": "Customer already participating in the event"
+        }, 200
+    
+    event.participants.append(user)
+    event.participation_count += 1
+    user.statistics.total_participated_events += 1
+    
+    db.session.commit()
+    
+    return {
+        "message": "Customer successfully added to the event"
+    }, 200
 
 @event_bp.get('/<int:event_id>')
 def get_event(event_id: int):

@@ -1,13 +1,9 @@
-
-from flask_sqlalchemy import SQLAlchemy
+from Alchemy import db
 from models.user import User
 
 import datetime
 import bcrypt
 import jwt
-
-from Alchemy import db
-
 
 def register_user(payload: dict) -> tuple:
     import os                 

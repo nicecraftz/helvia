@@ -1,12 +1,10 @@
-import os
+from app import SECRET_KEY
+
 from flask import Blueprint, request
-import jwt
 from models.user import User
 from services.alg_service import calculate_macro_interest
-from services.user_service import register_user, login_user
-from services.customer_service import register_customer, login_customer
 
-SECRET_KEY = os.getenv("JWT_SECRET_KEY", "default_secret_key")
+import jwt
 
 alg_bp = Blueprint('alg', __name__, url_prefix='/api/alg')
 
@@ -30,7 +28,6 @@ def get_user_interest_percentage(user_id: int):
     user = User.get_user_from_id(user_id)
     if not user:
         return {"error": "User not found"}, 404
-    user = User.get_user_from_id(user_id)
+    
     percentage = calculate_macro_interest(user)
-
     return percentage

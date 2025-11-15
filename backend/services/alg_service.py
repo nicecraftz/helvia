@@ -8,11 +8,8 @@ def calculate_macro_interest(user: User):
     }
 
     user_interests = [i.interest_name.lower() for i in user.interests]
-
     macro_counts = {macro: 0 for macro in macro_map}
-
     total_matches = 0
-
     for interest in user_interests:
         for macro, tags in macro_map.items():
             if interest in tags:

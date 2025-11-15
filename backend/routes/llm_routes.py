@@ -1,13 +1,10 @@
+from app import SECRET_KEY
 from flask import Blueprint, request
-import services.llm_service
 from models.user import User
 from services.llm_service import get_event_recommendation
 
-import os                 
-
-SECRET_KEY = os.getenv("JWT_SECRET_KEY", "default_secret_key")
-
 import jwt 
+
 
 llm_bp = Blueprint('llm', __name__, url_prefix='/api/llm')
 

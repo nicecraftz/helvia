@@ -2,7 +2,6 @@ from datapizza.clients.openai import OpenAIClient
 from datapizza.type import TextBlock
 from models.event import Event
 from models.user import User
-
 import os
 import json
 

@@ -1,13 +1,13 @@
-from flask_sqlalchemy import SQLAlchemy
 from models.customer import Customer
-import os                 
+from Alchemy import db
+from bcrypt import checkpw
+
+import jwt              
+import os   
 
 SECRET_KEY = os.getenv("JWT_SECRET_KEY", "default_secret_key")
 
-from Alchemy import db
 
-from bcrypt import checkpw
-import jwt
 
 def register_customer(payload: dict) -> str:
     new_customer = Customer.from_dict(payload)
