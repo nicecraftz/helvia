@@ -1,49 +1,60 @@
-USE Helvia;
-
-CREATE TABLE users (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(100) NOT NULL,
-  surname VARCHAR(100) NOT NULL,
-  username VARCHAR(50) NOT NULL UNIQUE,
-  email VARCHAR(100) NOT NULL UNIQUE,
-  password_bcrypt VARCHAR(255) NOT NULL
+CREATE TABLE events (
+id INT AUTO_INCREMENT PRIMARY KEY,
+title VARCHAR(255) NOT NULL,
+description TEXT NOT NULL,
+start_datetime DATETIME NOT NULL,
+end_datetime DATETIME NOT NULL,
+cost INT NOT NULL,
+image_url VARCHAR(255),
+link VARCHAR(255),
+sponsored BOOLEAN NOT NULL DEFAULT FALSE
 );
 
-CREATE TABLE user_access_data (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  last_login DATETIME DEFAULT CURRENT_TIMESTAMP,
-  user_id INT NOT NULL,
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+CREATE TABLE event_topics (
+id INT AUTO_INCREMENT PRIMARY KEY,
+name VARCHAR(100) NOT NULL,
+event_id INT NOT NULL,
+FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
+);
+
+CREATE TABLE users (
+id INT AUTO_INCREMENT PRIMARY KEY,
+name VARCHAR(100) NOT NULL,
+surname VARCHAR(100) NOT NULL,
+username VARCHAR(50) NOT NULL UNIQUE,
+email VARCHAR(100) NOT NULL UNIQUE,
+password_bcrypt VARCHAR(255) NOT NULL,
+is_private BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE user_statistics (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  total_partecipated_events INT DEFAULT 0,
-  points INT DEFAULT 0,
-  level INT DEFAULT 1,
-  streak INT DEFAULT 0,
-  user_id INT NOT NULL,
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
-CREATE TABLE achievements (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(100) NOT NULL,
-  description TEXT NOT NULL
-);
-
-CREATE TABLE user_achievements (
-  user_id INT NOT NULL,
-  achievement_id INT NOT NULL,
-  PRIMARY KEY (user_id, achievement_id),
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-  FOREIGN KEY (achievement_id) REFERENCES achievements(id) ON DELETE CASCADE
+id INT AUTO_INCREMENT PRIMARY KEY,
+total_partecipated_events INT DEFAULT 0,
+level INT DEFAULT 1,
+user_id INT NOT NULL,
+FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE user_interests (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  interest VARCHAR(100) NOT NULL,
-  user_id INT NOT NULL,
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+id INT AUTO_INCREMENT PRIMARY KEY,
+interest_name VARCHAR(100) NOT NULL,
+user_id INT NOT NULL,
+FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+CREATE TABLE events_interests (
+id INT AUTO_INCREMENT PRIMARY KEY,
+interest VARCHAR(100) NOT NULL,
+user_id INT NOT NULL
+);
+
+CREATE TABLE customers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    company_name VARCHAR(150),
+    vat_code VARCHAR(20) UNIQUE,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    bcrypt_password VARCHAR(255) NOT NULL
+);

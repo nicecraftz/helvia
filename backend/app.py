@@ -20,7 +20,7 @@ def create_app() -> Flask:
 
     db.init_app(app)
     
-    from routes.user_routes import user_bp
+    from routes.auth_routes import user_bp
     app.register_blueprint(user_bp)
 
     from routes.event_routes import event_bp

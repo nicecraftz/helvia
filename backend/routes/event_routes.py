@@ -1,33 +1,44 @@
-from flask import Blueprint, jsonify
-import requests
+from flask import Blueprint, request
 from models.event import Event
-from datetime import datetime
+from models.customer import Customer
+from services.event_service import create
 
-TTL = 300
+from app import SECRET_KEY
+
+import jwt
 
 event_bp = Blueprint('event', __name__, url_prefix='/api/event')
-cache: list[Event] = []
-last_fetch: datetime | None = None
+
 
 @event_bp.get('/')
 def get_events():
-    global cache, last_fetch
-    if last_fetch is None or (datetime.now() - last_fetch).total_seconds() > TTL:
-        url = "https://www.comune.macerata.it/wp-json/rest_api_ws/v1/getEventi"
-        response = requests.get(url, timeout=10, headers={
-            "Accept": "application/json",
-            "User-Agent": "helvia-backend/1.0"
-        })
+    events = Event.query.all()
+    all_events = {event.id: event for event in events}
+    return [event.__dict__ for event in all_events.values()], 200
 
-        data = response.json()
-        cache = [Event.from_dict(item) for item in data]
-        last_fetch = datetime.now()
 
-    return jsonify([e.__dict__ for e in cache]), 200
+@event_bp.post('/')
+def create_event():
+    payload = request.get_json()
+    token = request.headers.get("Authorization").split(" ")[1]
+    if not token or token == "":
+        return {
+            "error": "No authorization provided"
+        }, 403
+    
+    decoded_jwt = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+    customer = Customer.query.filter_by(id=decoded_jwt.get("customer_id")).first()
+    if not customer:
+        return {
+            "error": "Customer not found"
+        }, 404
+    
+    return create(payload, customer)
 
 @event_bp.get('/<int:event_id>')
 def get_event(event_id: int):
-    for event in cache:
-        if event.id == event_id:
-            return jsonify(event.__dict__), 200
-    return {"error": "Event not found"}, 404
+    event = Event.query.filter_by(id=event_id).first()
+    if event:
+        return event.__dict__, 200
+    else:
+        return {"error": "Event not found"}, 404

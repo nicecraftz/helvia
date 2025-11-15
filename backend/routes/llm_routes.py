@@ -18,6 +18,7 @@ def event_recommendation(event_id: int):
     
     decoded_jwt = jwt.decode(bearer, SECRET_KEY, algorithms=["HS256"])
     user = User.get_user_from_id(decoded_jwt.get("user_id"))
+    
     if not user:
         return {
             "error": "User not found"

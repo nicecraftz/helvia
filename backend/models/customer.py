@@ -1,7 +1,7 @@
 from app import db
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
-from payload import CustomerCreatePayload
+from models.event import Event
+import bcrypt
 
 class Customer(db.Model):
     __tablename__ = "customers"
@@ -15,17 +15,23 @@ class Customer(db.Model):
     vat_code : Mapped[str] = mapped_column(db.String(20), unique=True, nullable=True)
     username: Mapped[str] = mapped_column(db.String(50), unique=True, nullable=False)
     bcrypt_password: Mapped[str] = mapped_column(db.String(255), nullable=False)
+    
+    events: Mapped[list['Event']] = relationship(
+        "Event",
+        backref="author",
+        lazy="selectin",
+    )
 
     @staticmethod
-    def from_payload(payload: CustomerCreatePayload, bcrypt_password: str) -> "Customer":
+    def from_dict(data: dict) -> "Customer":
         return Customer(
-            first_name=payload.first_name,
-            last_name=payload.last_name,
-            email=payload.email,
-            company_name=payload.company_name,
-            vat_code=payload.vat_code,
-            username=payload.username,
-            bcrypt_password=bcrypt_password
+            first_name=data.get("first_name"),
+            last_name=data.get("last_name"),
+            email=data.get("email"),
+            company_name=data.get("company_name"),
+            vat_code=data.get("vat_code"),
+            username=data.get("username"),
+            bcrypt_password=bcrypt.hashpw(data.get("password").encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
         )
 
 

@@ -1,39 +1,58 @@
+from app import db
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from datetime import datetime
 
+class Event(db.Model):
+    __tablename__ = "events"
 
-class Event:
-    def __init__(
-        self, id, title, extended_description,
-        start_datetime, end_datetime, topics, contacts, costs, image_url, link
-    ):
-        self.id = id
-        self.title = title
-        self.extended_description = extended_description
-        self.start_datetime = start_datetime
-        self.end_datetime = end_datetime
-        self.topics = topics
-        self.contacts = contacts
-        self.costs = costs
-        self.image_url = image_url
-        self.link = link
+    id: Mapped[int] = mapped_column(primary_key=True)
+    title: Mapped[str] = mapped_column(db.String(255), nullable=False)
+    description: Mapped[str] = mapped_column(db.Text, nullable=False)
+    start_datetime: Mapped[datetime] = mapped_column(db.DateTime, nullable=False)
+    end_datetime: Mapped[datetime] = mapped_column(db.DateTime, nullable=False)
+    cost: Mapped[int] = mapped_column(db.Integer, nullable=False)
+    image_url: Mapped[str | None] = mapped_column(db.String(255), nullable=True)
+    link: Mapped[str | None] = mapped_column(db.String(255), nullable=True)
+    sponsored: Mapped[bool] = mapped_column(db.Boolean, nullable=False, default=False)
+    participants: Mapped[int] = mapped_column(db.Integer, nullable=False, default=0)
+    author_id: Mapped[int | None] = mapped_column(
+        db.Integer,
+        db.ForeignKey("customers.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+
+    topics: Mapped[list['EventTopic']] = relationship(
+        "EventTopic",
+        backref="event",
+        lazy="selectin",
+    )
 
     @staticmethod
-    def from_dict(data: dict) -> 'Event':
+    def from_dict(data: dict) -> "Event":
         return Event(
-            id=data.get("id", ""),
-            title=data.get("titolo", ""),
-            extended_description=data.get("descrizione_estesa", ""),
-            start_datetime=data.get("da", ""),
-            end_datetime=data.get("a", ""),
-            topics=data.get("argomenti", []),
-            contacts=data.get("contatti", []),
-            costs=data.get("costi", []),
-            image_url=data.get("immagine", ""),
-            link=data.get("link", "")
+            title=data.get("title"),
+            description=data.get("description"),
+            start_datetime=datetime.fromisoformat(data.get("start_datetime")),
+            end_datetime=datetime.fromisoformat(data.get("end_datetime")),
+            cost=data.get("cost", 0),
+            image_url=data.get("image_url"),
+            link=data.get("link"),
+            sponsored=data.get("sponsored", False),
+            participants=data.get("participants", 0),
+            author_id=data.get("author_id", None),
         )
-    
-    @staticmethod
-    def get_event_from_id(eventi : list['Event'], event_id: int) -> 'Event':
-        for event in eventi:
-            if event.id == event_id:
-                return event
-        return None
+
+class EventTopic(db.Model):
+    __tablename__ = "event_topics"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(db.String(100), nullable=False)
+
+    event_id: Mapped[int] = mapped_column(
+        db.Integer,
+        db.ForeignKey("events.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+
+    def __repr__(self) -> str:
+        return f"<EventTopic {self.name}>"
