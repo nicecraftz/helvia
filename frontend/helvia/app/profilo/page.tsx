@@ -17,7 +17,7 @@ export default function ProfilePage() {
   const aiProfile = {
     musica: 60,
     cultura: 30,
-    food: 10,
+    sociale: 10,
   }
 
   const userInterests = ['Musica', 'Arte']
@@ -44,7 +44,10 @@ export default function ProfilePage() {
               </h1>
               <p className="text-muted-foreground">@mariorossi</p>
               <p className="text-sm text-muted-foreground mt-1">
-             </p>
+  
+  
+  
+               </p>
               <div className="flex gap-2 mt-3">
                 <span className="px-3 py-1 bg-primary/20 text-primary text-xs font-medium rounded-full border border-primary/30">
                   Esploratore di Macerata
@@ -107,11 +110,11 @@ export default function ProfilePage() {
             </div>
             <div>
               <div className="flex justify-between text-sm mb-2">
-                <span className="text-foreground font-medium">Food</span>
-                <span className="text-accent font-bold">{aiProfile.food}%</span>
+                <span className="text-foreground font-medium">Sociale</span>
+                <span className="text-accent font-bold">{aiProfile.sociale}%</span>
               </div>
               <div className="h-3 bg-muted/30 rounded-full overflow-hidden">
-                <div className="h-full bg-accent rounded-full transition-all duration-1000" style={{ width: `${aiProfile.food}%` }} />
+                <div className="h-full bg-accent rounded-full transition-all duration-1000" style={{ width: `${aiProfile.sociale}%` }} />
               </div>
             </div>
           </div>
