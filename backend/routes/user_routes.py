@@ -16,22 +16,3 @@ def register():
 def login():
     payload = LoginUserPayload(**request.get_json())
     return login_user(payload)
-
-@user_bp.put('/activate')
-def activate():
-    bearer = request.headers.get("Authorization").split(" ")[1]
-    if not bearer or bearer == "":
-        return {
-            "error": "No authorization provided"
-        }, 403
-    
-    from services.user_service import SECRET_KEY
-    claims = jwt.decode(bearer, SECRET_KEY, algorithms=["HS256"])    
-    user : User = User.query.filter_by(id=claims["user_id"]).first()
-
-    if not user:
-        return {
-            "error": "User not found"
-        }, 404
-    
-    return activate_user(user)

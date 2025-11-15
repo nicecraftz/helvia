@@ -45,16 +45,3 @@ def login_user(payload: LoginUserPayload):
 
     token = jwt.encode(claims, SECRET_KEY, algorithm="HS256")
     return token
-
-def activate_user(user: User):    
-    today = datetime.date.today()
-
-    if user.access_data.last_login != today:
-        delta_days = (today - user.access_data.last_login).days
-        if delta_days == 1:
-            user.statistics.streak += 1
-        else:
-            user.statistics.streak = 1
-
-        user.access_data.last_login = today
-        db.session.commit()
